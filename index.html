@@ -46,7 +46,75 @@
         height: 1000px;
         width: 1500px;
 
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
 
+    }
+
+    .card{
+        width: 360px;
+        height: 400px;
+        border-radius: 30px;
+        margin: 50px 30px;
+    }
+
+    .card:hover{
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255,255,0,0.5);
+
+        cursor: pointer;
+    }
+
+    .card > img{
+        margin: 10px;
+    }
+
+    .card > .name{
+        font-size: 30px;
+        font-weight: bold;
+        color: #1a1e21;
+        text-align: center;
+    }
+
+    #gura{
+        background-color: rgba(32, 80, 188, 30%);
+    }
+
+    #gura:hover{
+        box-shadow: 0 0 50px rgba(32, 80, 188, 80%);
+    }
+
+    #ame{
+        background-color: rgba(255, 218, 85, 30%);
+    }
+
+    #ame:hover{
+        box-shadow: 0 0 50px rgba(255, 218, 85, 80%);
+    }
+
+    #calli{
+        background-color: rgba(236, 159, 207, 30%);
+    }
+
+    #calli:hover{
+        box-shadow: 0 0 50px rgba(236, 159, 207, 80%);
+    }
+
+    #ina{
+        background-color: rgba(131, 104, 209, 30%);
+    }
+
+    #ina:hover{
+        box-shadow: 0 0 50px  rgba(131, 104, 209, 80%);
+    }
+
+    #kiwawa{
+        background-color: rgba(255, 165, 86, 30%);
+    }
+
+    #kiwawa:hover{
+        box-shadow: 0 0 50px rgba(255, 165, 86, 80%);
     }
 
 </style>
@@ -60,8 +128,42 @@
 </div>
 
     <div class="content">
+<a href="https://hololive.hololivepro.com/talents/gawr-gura/">
+<div class="card" id="gura" >
+     <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Gawr-Gura_list_thumb.png">
+     <div class="name">Gawr Gura</div>
+</div>
+</a>
 
-    </div>
+ <a href="https://hololive.hololivepro.com/talents/watson-amelia/">
+ <div class="card" id="ame">
+     <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Watson-Amelia_list_thumb.png">
+     <div class="name">Watson Amelia</div>
+ </div>
+ </a>
+
+ <a href="https://hololive.hololivepro.com/talents/mori-calliope/">
+ <div class="card" id="calli">
+        <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Mori-Calliope_list_thumb.png">
+        <div class="name">Mori Calliope</div>
+  </div>
+ </a>
+
+ <a href="https://hololive.hololivepro.com/talents/ninomae-inanis/">
+ <div class="card" id="ina">
+        <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Ninomae-Inanis_list_thumb.png">
+        <div class="name">Ninomae Ina'nis</div>
+   </div>
+ </a>
+
+ <a href="https://hololive.hololivepro.com/talents/takanashi-kiara/">
+ <div class="card" id="kiwawa">
+         <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Takanashi-Kiara_list_thumb.png">
+         <div class="name">Takanashi Kiara</div>
+ </div>
+ </a>
+ </div>
+
 
 </div>
 
