@@ -1,69 +1,613 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>2025網頁期中</title>
-    <link rel="stylesheet" href="holoCSS.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 宇宙決策器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("APIWeb/image/BG.png");
+            background-size: cover;          /* 填滿整個背景，保持比例 */
+            background-position: center;     /* 圖片置中 */
+            background-repeat: no-repeat;    /* 不重複 */
+            background-attachment: fixed;    /* 固定背景（視差效果）*/
+            opacity: 0.3;                   /* 調低透明度到30% */
+            z-index: -1;                     /* 確保在最底層 */
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(1deg); }
+            66% { transform: translateY(10px) rotate(-1deg); }
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            padding: 50px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(100px) scale(0.8); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(118, 75, 162, 0.8)); }
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .question-form {
+            margin-bottom: 40px;
+        }
+
+        .question-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px 25px;
+            font-size: 1.2rem;
+            border: 3px solid transparent;
+            border-radius: 50px;
+            background: linear-gradient(white, white) padding-box,
+            linear-gradient(45deg, #667eea, #764ba2) border-box;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin-bottom: 25px;
+        }
+
+        .question-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .question-input::placeholder {
+            color: #999;
+        }
+
+        .ask-btn {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .ask-btn:hover {
+            transform: perspective(1000px) rotateX(-10deg) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .ask-btn:active {
+            transform: perspective(1000px) rotateX(10deg) translateY(2px);
+        }
+
+        .ask-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .ask-btn:hover::before {
+            left: 100%;
+        }
+
+        .ask-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            margin: 40px 0;
+            padding: 30px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .result-container.loading {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .result-container.yes {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            animation: celebrate 0.8s ease-out;
+        }
+
+        .result-container.no {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%);
+            animation: shake 0.6s ease-out;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.05) rotate(2deg); }
+            75% { transform: scale(1.05) rotate(-2deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .answer-display {
+            text-align: center;
+        }
+
+        .answer-text {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .gif-container {
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .gif-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            animation: zoomIn 0.6s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .question-echo {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.7;
+            animation: floatRandom 8s ease-in-out infinite;
+        }
+
+        @keyframes floatRandom {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.7;
+            }
+            25% {
+                transform: translateY(-30px) translateX(20px) rotate(90deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-10px) translateX(-15px) rotate(180deg);
+                opacity: 0.5;
+            }
+            75% {
+                transform: translateY(-25px) translateX(25px) rotate(270deg);
+                opacity: 0.8;
+            }
+        }
+
+        .emoji-1 { top: 10%; left: 15%; animation-delay: 0s; }
+        .emoji-2 { top: 20%; right: 20%; animation-delay: 2s; }
+        .emoji-3 { bottom: 30%; left: 10%; animation-delay: 4s; }
+        .emoji-4 { bottom: 15%; right: 15%; animation-delay: 6s; }
+
+        .history {
+            margin-top: 40px;
+            text-align: left;
+            background: rgba(0,0,0,0.05);
+            padding: 25px;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .history h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .history-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .history-question {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .history-answer {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px; }
+            .title { font-size: 2.2rem; }
+            .question-input { font-size: 1rem; padding: 15px 20px; }
+            .ask-btn { padding: 15px 30px; font-size: 1.1rem; }
+            .answer-text { font-size: 3rem; }
+            .result-container { min-height: 300px; padding: 20px; }
+        }
+    </style>
 </head>
-
-
-
 <body>
-
-<div class="bg">
-<div class="title">
-    <img class="team" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Hololive_ENGLISH_logo.svg/1920px-Hololive_ENGLISH_logo.svg.png">
-    <img class="logo" src="https://static.wikitide.net/hololivewiki/6/61/Logo_-_hololive_English_-Myth-_01.png">
+<div class="floating-elements">
+    <div class="floating-emoji emoji-1"><img src="APIWeb/image/think-1.png" height="100" width="100"/></div>
+    <div class="floating-emoji emoji-2"><img src="APIWeb/image/think-2.png" height="100" width="100"/></div>
+    <div class="floating-emoji emoji-3"><img src="APIWeb/image/think-3.png" height="100" width="100"/></div>
+    <div class="floating-emoji emoji-4"><img src="APIWeb/image/think-4.png" height="100" width="100"/></div>
 </div>
 
-    <div class="content">
-<a href="https://hololive.hololivepro.com/talents/gawr-gura/">
-<div class="card" id="gura" >
-     <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Gawr-Gura_list_thumb.png">
-     <div class="name">Gawr Gura</div>
-</div>
-</a>
-
- <a href="https://hololive.hololivepro.com/talents/watson-amelia/">
- <div class="card" id="ame">
-     <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Watson-Amelia_list_thumb.png">
-     <div class="name">Watson Amelia</div>
- </div>
- </a>
-
- <a href="https://hololive.hololivepro.com/talents/mori-calliope/">
- <div class="card" id="calli">
-        <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Mori-Calliope_list_thumb.png">
-        <div class="name">Mori Calliope</div>
-  </div>
- </a>
-
- <a href="https://hololive.hololivepro.com/talents/ninomae-inanis/">
- <div class="card" id="ina">
-        <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Ninomae-Inanis_list_thumb.png">
-        <div class="name">Ninomae Ina'nis</div>
-   </div>
- </a>
-
- <a href="https://hololive.hololivepro.com/talents/takanashi-kiara/">
- <div class="card" id="kiwawa">
-         <img src="https://hololive.hololivepro.com/wp-content/uploads/2020/07/Takanashi-Kiara_list_thumb.png">
-         <div class="name">Takanashi Kiara</div>
- </div>
- </a>
-
- </div>
-
-    <div class="bottom">
-     <img src="https://walfiegif.wordpress.com/wp-content/uploads/2023/07/out-transparent-124.gif">
-     <img src="https://walfiegif.wordpress.com/wp-content/uploads/2023/07/out-transparent-125.gif">
-     <img src="https://walfiegif.wordpress.com/wp-content/uploads/2023/07/out-transparent-123.gif">
-     <img src="https://walfiegif.wordpress.com/wp-content/uploads/2023/07/out-transparent-126.gif">
-     <img src="https://walfiegif.wordpress.com/wp-content/uploads/2023/07/out-transparent-127.gif">
-
+<div class="container">
+    <div class="header">
+        <h1 class="title">🔮 宇宙決策器 🔮</h1>
+        <p class="subtitle">在猶豫嗎?讓宇宙決策器來幫你解答！</p>
     </div>
 
+    <div class="question-form">
+        <input
+                type="text"
+                id="questionInput"
+                class="question-input"
+                placeholder="輸入你的問題... (例如：我今天應該點外賣嗎？)"
+                maxlength="200"
+        >
+        <br>
+        <button id="askBtn" class="ask-btn">
+            🎲 詢問宇宙
+        </button>
+    </div>
+
+    <div id="resultContainer" class="result-container">
+        <div style="font-size: 1.5rem; opacity: 0.8;">
+            💭 讓宇宙來為你指引方向
+        </div>
+    </div>
+
+    <div id="history" class="history">
+        <h3>📚 決策歷史</h3>
+        <div id="historyList"></div>
+    </div>
 </div>
 
+<script>
+    let decisionHistory = [];
+
+    const questionInput = document.getElementById('questionInput');
+    const askBtn = document.getElementById('askBtn');
+    const resultContainer = document.getElementById('resultContainer');
+    const history = document.getElementById('history');
+    const historyList = document.getElementById('historyList');
+
+    const loadingMessages = [
+        '🔮 宇宙正在用神奇力量為你尋找答案...',
+        '✨ 分析你的過去未來...',
+        '🌟 召喚神秘決策力量...',
+        '🎱 搖晃命運的骰子...',
+        '💫 穿越次元尋找答案...',
+        '🤔 Mmmmmmmmm...',
+        '⭐ 星座正在排列組合...'
+    ];
+
+    const yesReactions = [
+        { text: 'YES!', emoji: '🎉' },
+        { text: 'DO IT!', emoji: '✅' },
+        { text: 'YA~~!', emoji: '🙌' },
+        { text: 'JUST DO IT!', emoji: '💪' },
+        { text: 'LET,S GO!', emoji: '🔥' }
+    ];
+
+    const noReactions = [
+        { text: 'BAD!', emoji: '❌' },
+        { text: 'NOT GOOD!', emoji: '🚫' },
+        { text: 'NO!GOD!PLEASE NO!!', emoji: '💀' },
+        { text: 'NO!', emoji: '😱' },
+        { text: 'NOT A GOOD IDEA!', emoji: '🙅‍♂️' }
+    ];
+
+    async function askUniverse() {
+        const question = questionInput.value.trim();
+
+        if (!question) {
+            alert('痾...所以你想問甚麼🤨');
+            return;
+        }
+
+        askBtn.disabled = true;
+        resultContainer.className = 'result-container loading';
+
+        // 隨機選擇載入訊息
+        const loadingMsg = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+
+        resultContainer.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="loading-text">${loadingMsg}</div>
+            `;
+
+        try {
+            // 模擬載入延遲，增加神秘感
+            await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
+
+            const response = await fetch('https://yesno.wtf/api');
+            const data = await response.json();
+
+            const isYes = data.answer === 'yes';
+            const reaction = isYes ?
+                yesReactions[Math.floor(Math.random() * yesReactions.length)] :
+                noReactions[Math.floor(Math.random() * noReactions.length)];
+
+            // 更新UI
+            resultContainer.className = `result-container ${data.answer}`;
+            resultContainer.innerHTML = `
+                    <div class="answer-display">
+                        <div class="question-echo">"${question}"</div>
+                        <div class="answer-text">${reaction.emoji} ${reaction.text} ${reaction.emoji}</div>
+                        <div class="gif-container">
+                            <img src="${data.image}" alt="${data.answer}" class="gif-image" onload="this.style.animation='zoomIn 0.6s ease-out'">
+                        </div>
+                        <div style="font-size: 1.1rem; margin-top: 15px; opacity: 0.9;">
+                            ${isYes ? '宇宙說：去做吧！✨' : '宇宙說：也許不是現在 🌙'}
+                        </div>
+                    </div>
+                `;
+
+            // 添加到歷史記錄
+            addToHistory(question, data.answer, data.image);
+
+            // 製造慶祝或震動效果
+            if (isYes) {
+                createConfetti();
+            } else {
+                document.body.style.animation = 'shake 0.5s ease-out';
+                setTimeout(() => {
+                    document.body.style.animation = '';
+                }, 500);
+            }
+
+        } catch (error) {
+            resultContainer.className = 'result-container';
+            resultContainer.innerHTML = `
+                    <div style="font-size: 1.3rem; color: #ff6b6b;">
+                        😵 哎呀！宇宙信號中斷了...<br>
+                        <small style="font-size: 1rem; margin-top: 10px; display: block;">
+                            請稍後再試，宇宙現在沒空鳥你
+                        </small>
+                    </div>
+                `;
+        }
+
+        askBtn.disabled = false;
+    }
+
+    function addToHistory(question, answer, gifUrl) {
+        decisionHistory.unshift({
+            question,
+            answer,
+            gifUrl,
+            timestamp: new Date().toLocaleString('zh-TW')
+        });
+
+        // 只保留最近10個記錄
+        if (decisionHistory.length > 10) {
+            decisionHistory = decisionHistory.slice(0, 10);
+        }
+
+        updateHistoryDisplay();
+    }
+
+    function updateHistoryDisplay() {
+        if (decisionHistory.length > 0) {
+            history.style.display = 'block';
+            historyList.innerHTML = decisionHistory.map((item, index) => `
+                    <div class="history-item" style="animation-delay: ${index * 0.1}s">
+                        <div class="history-question">${item.question}</div>
+                        <div class="history-answer">
+                            宇宙回答：${item.answer.toUpperCase()} | ${item.timestamp}
+                        </div>
+                    </div>
+                `).join('');
+        }
+    }
+
+    function createConfetti() {
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                        position: fixed;
+                        top: -10px;
+                        left: ${Math.random() * 100}vw;
+                        width: 10px;
+                        height: 10px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 1000;
+                        animation: confettiFall 3s ease-out forwards;
+                    `;
+
+                document.body.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }, i * 50);
+        }
+    }
+
+    // 添加 confetti 動畫 CSS
+    const style = document.createElement('style');
+    style.textContent = `
+            @keyframes confettiFall {
+                to {
+                    transform: translateY(100vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+        `;
+    document.head.appendChild(style);
+
+    // 事件監聽器
+    askBtn.addEventListener('click', askUniverse);
+
+    questionInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !askBtn.disabled) {
+            askUniverse();
+        }
+    });
+
+    // 自動 focus 輸入框
+    questionInput.focus();
+</script>
 </body>
 </html>
